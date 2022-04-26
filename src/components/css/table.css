@@ -62,7 +62,16 @@ td {
   color: red;
 }
 
-#breakerColumn {
+.breakerColumn {
   background-color: black;
-  padding:2px;
+  padding:1.5px;
+}
+
+.warning {
+  color: red;
+}
+
+#tableLoaderContainer {
+  margin: auto;
+  width: auto;
 }

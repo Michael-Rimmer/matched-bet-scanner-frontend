@@ -55,26 +55,8 @@ export const COLUMNS = [
     {
         Header:'Liquidity',
         accessor: 'liquidity',
+        toolTipText: 'Liquidity is the maximum amount of money available for you to place your lay bet on the betting exchange.',
     },
-    // {
-    //     Header: 'Lay Stake',
-    //     accessor: calcLayStake,
-    //     className: 'layStakeColumn',
-    //     Cell: genLayStakeCell,
-    // },
-    // {
-    //     Header: 'Profit/Loss',
-    //     className: '',
-    //     accessor: calcProfitLoss,
-    //     Cell: genProfitLossCell,
-    // },
-    // {
-    //     Header: 'Bookmaker Link',
-    //     accessor: 'bookmakerWebLink',
-    // },    {
-    //     Header: 'Exchange Link',
-    //     accessor: 'exchangeWebLink',
-    // }
 ]
 
 function genBookmakerExchangeCell({value}) {

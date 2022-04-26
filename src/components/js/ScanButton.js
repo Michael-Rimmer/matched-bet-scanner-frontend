@@ -16,7 +16,8 @@ export function ScanButton() {
 
     return (
         <div>
-        <button id='scanButton' onClick={generateTable}>Scan Matched Bets!</button>
+        <button className='scanButton' onClick={() => {generateTable()}}>Scan Matched Bets!</button>
+        {/* <button className='scanButton' id='ScanButtonDemo' onClick={() => {generateTable(false)}}>Scan Matched Bets (DEMO)!</button> */}
         </div>
     );
 }

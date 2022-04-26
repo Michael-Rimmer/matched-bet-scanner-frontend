@@ -3,32 +3,37 @@ import { useTable, useSortBy, usePagination } from 'react-table'
 import axios from 'axios';
 import MOCK_DATA from '../../example_data/MOCK_DATA.json'
 import { COLUMNS } from './columns.js'
+import FadeLoader from "react-spinners/FadeLoader";
 
 import '../css/table.css'
 
 export function ResultsTable() {
 
     const columns = useMemo(() => COLUMNS, []);
-    const data = useMemo(() => MOCK_DATA, []);
-
-    // Make API call to populate table data
-    // const [apiData, setApiData] = useState([]);
-    // useEffect(() => {
-    //   (async () => {
-    //     const result = await axios.get(
-    //         "http://localhost:8080/matched-bets",
-    //         { headers: {'Content-Type': 'application/json'}}
-    //     );
-    //     setApiData(result.data);
-    //   })();
-    // }, []);
-    // const data = useMemo(() => apiData, []); // can I memo data once its received from axios?
-
+    // const data = useMemo(() => MOCK_DATA, []);
+    const [tableLoading, setTableLoading] = useState(true);
     const initialState = { hiddenColumns: ['snrRating'] };
     const [normalBetRadioChecked, setNormalBetRadioChecked] = useState(true);
     const [backStakeInput, setBackStakeInput] = useState(0);
     const [exchangeCommissionInput, setExchangeCommissionInput] = useState(2);
-    // const [layStake, setLayStake] = useState(0);
+
+    // Make API call to populate table data
+    const [data, setData] = useState([]);
+    useEffect(() => {
+      (async () => {
+        const result = await axios.get(
+            "http://localhost:8080/matched-bets",
+            { headers: {'Content-Type': 'application/json'}}
+        ).catch(function (error) {
+            console.log();
+            alert('Failed to obtain data from backend API, please refresh page and try again. If it continues to fail then the backend server is probably down :(');
+            setTableLoading(false);
+        });
+        setData(result.data);
+        setTableLoading(false);
+      })();
+    }, []);
+    // const data = useMemo(() => apiData, []); // can I memo data once its received from axios?
 
     const {
         getTableProps,
@@ -70,9 +75,23 @@ export function ResultsTable() {
         }
     };
 
-    function CustomTableColumns({row, backStake}) {
+    // Unfortunately I do not know how to include columns that 
+    // generate data on the front-end into the react-table
+    // framework so these columns are simply react components
+    function CustomTH() {
+        return (
+            <>
+                <th className='breakerColumn'></th>
+                <th title={'Lay stake is the amount of money you must lay on the event to obtain the predicted overall profit/loss.\nBefore placing the back bet, you must always ensure that there is sufficient liquidity for the lay bet (liquidity must be <= lay stake).\nOtherwise only part of your lay bet will be accepted at the exchange and you will be at risk of losing money!'}>Lay Stake</th>
+                <th title='Liability is the amount of money you need in your betting exchange in order to cover your lay bet, if it loses.'>Liability</th>
+                <th>Overall Profit/Loss</th>
+            </>
+        );
+    }
 
-        function calcLayStake (row) {
+    function CustomTD({ row, backStake }) {
+
+        function calcLayStake(row) {
             if (exchangeCommissionInput === 0 || backStakeInput === 0) {
                 // short circuit
                 return 0;
@@ -81,7 +100,7 @@ export function ResultsTable() {
             let backOdds = row.values.backOdds;
             let layOdds = row.values.layOdds;
             let optimalLayStake = 0;
-    
+
             if (normalBetRadioChecked) {
                 optimalLayStake = Math.round(backOdds / (layOdds - (exchangeCommissionInput / 100)) * backStakeInput * 100) / 100;
             } else {
@@ -92,11 +111,23 @@ export function ResultsTable() {
         }
 
         function genLayStakeCell(layStake) {
-            return <td className='layStakeColumn'>{layStake}</td>
+            if (row.values.liquidity < layStake) {
+                return (
+                    <td className='layStakeColumn' title='Be careful if using this bet - there may not be sufficient liquidity for this lay stake amount.'>{layStake}<span className='warning'> &#9888;</span></td>
+                );
+            } else {
+                return <td className='layStakeColumn'>{layStake}</td>;
+            }
         }
 
         function genLiabilityCell(row, layStake) {
-            return <td>{Math.round((layStake * (row.values.layOdds - 1))*100)/100}</td>
+            
+            const liability = Math.round((layStake * (row.values.layOdds - 1)) * 100) / 100;
+            return <td>{liability}</td>;
+        }
+
+        function displayLiquidityWarning(e) {
+            console.log('display liquidity warning');
         }
 
         function genOverallProfitCell(row, backStake, layStake) {
@@ -105,7 +136,7 @@ export function ResultsTable() {
             let profitIfLayBetWins = 0;
 
             profitIfBackBetWins = (row.values.backOdds - 1) * backStake - (row.values.layOdds - 1) * layStake;
-            
+
             if (normalBetRadioChecked) {
                 profitIfLayBetWins = layStake * (1 - (exchangeCommissionInput / 100)) - backStake;
             } else {
@@ -126,9 +157,9 @@ export function ResultsTable() {
         let layStake = calcLayStake(row);
         return (
             <>
-            {genLayStakeCell(layStake)}
-            {genLiabilityCell(row, layStake)}
-            {genOverallProfitCell(row, backStake, layStake)}
+                {genLayStakeCell(layStake)}
+                {genLiabilityCell(row, layStake)}
+                {genOverallProfitCell(row, backStake, layStake)}
             </>
         )
     }
@@ -143,11 +174,11 @@ export function ResultsTable() {
                 <label htmlFor='snrBetRadio'>SNR Bet</label>
                 <input type='radio' id='snrBetRadio' name='betType' value='snr' onChange={handleBetTypeChange} checked={!normalBetRadioChecked} />
                 <br />
-                <label htmlFor='backStakeInput'>Back stake</label>
-                <input type='number' id='backStakeInput' min='0' value={backStakeInput} onChange={(e) => {setBackStakeInput(e.target.value)}} />
+                <label htmlFor='backStakeInput'>Back stake £</label>
+                <input type='number' id='backStakeInput' min='0' value={backStakeInput} onChange={(e) => { setBackStakeInput(e.target.value) }} />
                 <br />
                 <label htmlFor='exchangeCommissionInput'>Exchange Commision (%)</label>
-                <input type='number' id='exchangeCommissionInput' min='0' max='100' value={exchangeCommissionInput} onChange={(e) => {setExchangeCommissionInput(e.target.value)}} />
+                <input type='number' id='exchangeCommissionInput' min='0' max='100' value={exchangeCommissionInput} onChange={(e) => { setExchangeCommissionInput(e.target.value) }} />
             </div>
             <div>
                 <span>
@@ -205,14 +236,14 @@ export function ResultsTable() {
                                         </th>
                                     );
                                 })}
-                                <th id={'breakerColumn'}></th>
-                                <th>Lay Stake</th>
-                                <th>Liability</th>
-                                <th>Overall Profit/Loss</th>
+                                <CustomTH />
                             </tr>
                         );
                     })}
                 </thead>
+                <div id='tableLoaderContainer'>
+                <FadeLoader color={'#b8b8b8'} speedMultiplier={0.8} height={25} width={25} radius={99} margin={50} loading={tableLoading} size={150}></FadeLoader>
+                </div>
                 <tbody {...getTableBodyProps()}>
                     {page.map(row => {
                         prepareRow(row)
@@ -231,8 +262,8 @@ export function ResultsTable() {
                                     )
                                 })}
                                 {/* Columns generated by user input */}
-                                <td id={'breakerColumn'}></td>
-                                <CustomTableColumns row={row} backStake={backStakeInput}/>
+                                <td className='breakerColumn'></td>
+                                <CustomTD row={row} backStake={backStakeInput} />
                             </tr>
                         )
                     })}

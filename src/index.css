@@ -12,7 +12,7 @@ code {
     monospace;
 }
 
-#scanButton {
+.scanButton {
   appearance: none;
   backface-visibility: hidden;
   background-color: #27ae60;
@@ -43,22 +43,26 @@ code {
   white-space: nowrap;
 }
 
-#scanButton:hover {
+.scanButton:hover {
   background-color: #1e8449;
   opacity: 1;
   transform: translateY(0);
   transition-duration: .35s;
 }
 
-#scanButton:active {
+.scanButton:active {
   transform: translateY(2px);
   transition-duration: .35s;
 }
 
-#scanButton:hover {
+.scanButton:hover {
   box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
 }
 
 .sidebyside {
   display: inline-block;
+}
+
+#scanButtonDemo {
+  
 }
