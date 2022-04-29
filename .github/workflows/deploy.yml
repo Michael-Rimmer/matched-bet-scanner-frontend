@@ -18,4 +18,5 @@ jobs:
         script: |
           cd ~/matched-bet-scanner-frontend
           git pull origin main
-          git status
+          npm run build
+          cp -a build/. /home/bitnami/htdocs/
