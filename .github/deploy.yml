@@ -1,0 +1,21 @@
+name: Deployment Workflow
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run deploy script
+      uses: appleboy/ssh-action@master
+      with: 
+        host: '18.134.46.14'
+        username: bitnami
+        key: ${{ secrets.BACKEND_SCANNER_SSH_KEY }}
+        port: 22
+        script: |
+          cd ~/matched-bet-scanner-backend
+          git pull origin main
+          git status
