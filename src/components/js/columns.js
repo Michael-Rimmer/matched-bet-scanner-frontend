@@ -24,12 +24,14 @@ export const COLUMNS = [
         id: 'normalRating',
         Header:'Rating (%)',
         accessor: 'normalBetRating',
+        sortMethod: (a, b) => Number(a)-Number(b),
         toolTipText: 'The percentage of the back stake that you are guaranteed to receive if you back AND lay the bet correctly.\nFor example, if:\n\tBack stake = £10\n\tRating = 90%\nThen after both bets complete, you will have £9 returned to you (a loss of £1).\nHowever, you will have completed a qualifying bet which should allow you to access some profit-generating offer!\nYou want the rating to be as high as possible to minimise losses/maximise gains so click this column heading to sort!'
     },
     {
         id: 'snrRating',
         Header:'SNR Rating (%)',
         accessor: 'snrBetRating',
+        sortMethod: (a, b) => Number(a)-Number(b),
         toolTipText: 'A SNR (stake not returned) bet is the most common type of free bet that a bookmaker will give to you.\nSNR means that your back stake is not returned if you win the bet.\nFor example, if\n\tBack stake = £10\n\tBack odds = 2.00\nThen, if your back bet wins, you will have £10 returned to you (normally you would receive £20, because the winnings includes your back stake).\nThe SNR Rating is a percentage of the back stake that you are guaranteed to receive if you back AND lay the bet correctly.\nYou want the rating to be as high as possible to minimise losses/maximise gains so click this column heading to sort!'
     },
     {
@@ -40,6 +42,7 @@ export const COLUMNS = [
     {
         Header:'Back',
         accessor: 'backOdds',
+        sortMethod: (a, b) => Number(a)-Number(b),
         className: 'backOddsColumn',
     },
     {
@@ -50,11 +53,13 @@ export const COLUMNS = [
     {
         Header:'Lay',
         accessor: 'layOdds',
+        sortMethod: (a, b) => Number(a)-Number(b),
         className: 'layOddsColumn',
     },
     {
         Header:'Liquidity',
         accessor: 'liquidity',
+        sortMethod: (a, b) => Number(a)-Number(b),
         toolTipText: 'Liquidity is the maximum amount of money available for you to place your lay bet on the betting exchange.',
     },
 ]

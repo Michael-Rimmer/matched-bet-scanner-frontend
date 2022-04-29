@@ -10,13 +10,17 @@ import '../css/table.css'
 export function ResultsTable() {
 
     const columns = useMemo(() => COLUMNS, []);
-    // const data = useMemo(() => MOCK_DATA, []);
     const [tableLoading, setTableLoading] = useState(true);
     const initialState = { hiddenColumns: ['snrRating'] };
     const [normalBetRadioChecked, setNormalBetRadioChecked] = useState(true);
     const [backStakeInput, setBackStakeInput] = useState(0);
     const [exchangeCommissionInput, setExchangeCommissionInput] = useState(2);
 
+    // For dev
+    // const data = useMemo(() => MOCK_DATA, []);
+    // setTableLoading(false);
+
+    // For prod
     // Make API call to populate table data
     const [data, setData] = useState([]);
     useEffect(() => {
@@ -33,7 +37,6 @@ export function ResultsTable() {
         setTableLoading(false);
       })();
     }, []);
-    // const data = useMemo(() => apiData, []); // can I memo data once its received from axios?
 
     const {
         getTableProps,
