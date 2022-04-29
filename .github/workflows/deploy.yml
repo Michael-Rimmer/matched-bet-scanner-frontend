@@ -13,7 +13,7 @@ jobs:
       with: 
         host: '18.134.46.14'
         username: bitnami
-        key: ${{ secrets.BACKEND_SCANNER_SSH_KEY }}
+        key: ${{ secrets.AWSLIGHTSAIL_SSH_KEY }}
         port: 22
         script: |
           cd ~/matched-bet-scanner-frontend
