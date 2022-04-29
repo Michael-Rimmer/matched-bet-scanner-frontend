@@ -8,7 +8,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Run deploy script
+    - name: Run deploy script now
       uses: appleboy/ssh-action@master
       with: 
         host: '18.134.46.14'
@@ -16,6 +16,6 @@ jobs:
         key: ${{ secrets.BACKEND_SCANNER_SSH_KEY }}
         port: 22
         script: |
-          cd ~/matched-bet-scanner-backend
+          cd ~/matched-bet-scanner-frontend
           git pull origin main
           git status
