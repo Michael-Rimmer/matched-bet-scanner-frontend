@@ -22,7 +22,7 @@ export function ResultsTable() {
     useEffect(() => {
       (async () => {
         const result = await axios.get(
-            "http://localhost:8080/matched-bets",
+            `http://${process.env.REACT_APP_API_IP}:${process.env.REACT_APP_API_PORT}/matched-bets`,
             { headers: {'Content-Type': 'application/json'}}
         ).catch(function (error) {
             console.log();
