@@ -10,7 +10,7 @@ import '../css/table.css'
 export function ResultsTable() {
 
     const columns = useMemo(() => COLUMNS, []);
-    const [tableLoading, setTableLoading] = useState(true);
+    const [tableLoading, setTableLoading] = useState(true); // set to false for dev
     const initialState = { hiddenColumns: ['snrRating'] };
     const [normalBetRadioChecked, setNormalBetRadioChecked] = useState(true);
     const [backStakeInput, setBackStakeInput] = useState(0);
@@ -18,7 +18,7 @@ export function ResultsTable() {
 
     // For dev
     // const data = useMemo(() => MOCK_DATA, []);
-    // setTableLoading(false);
+    // setTableLoading(false); // why does setting this false cause infinite rerenders?
 
     // For prod
     // Make API call to populate table data
@@ -110,7 +110,7 @@ export function ResultsTable() {
                 optimalLayStake = Math.round((backOdds - 1) / (layOdds - (exchangeCommissionInput / 100)) * backStakeInput * 100) / 100;
             }
 
-            return optimalLayStake;
+            return optimalLayStake.toFixed(2);
         }
 
         function genLayStakeCell(layStake) {
@@ -125,7 +125,7 @@ export function ResultsTable() {
 
         function genLiabilityCell(row, layStake) {
             
-            const liability = Math.round((layStake * (row.values.layOdds - 1)) * 100) / 100;
+            const liability = (Math.round((layStake * (row.values.layOdds - 1)) * 100) / 100).toFixed(2);
             return <td>{liability}</td>;
         }
 
@@ -146,7 +146,7 @@ export function ResultsTable() {
                 profitIfLayBetWins = layStake * (1 - (exchangeCommissionInput / 100));
             }
 
-            const overallProfit = Math.round(((profitIfBackBetWins + profitIfLayBetWins) / 2) * 100) / 100;
+            const overallProfit = (Math.round(((profitIfBackBetWins + profitIfLayBetWins) / 2) * 100) / 100).toFixed(2);
 
             var classVar = '';
             if (overallProfit > 0) {
