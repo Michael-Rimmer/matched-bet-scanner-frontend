@@ -1,7 +1,7 @@
 DEMO of Matched Bet Scanner Frontend
 ---
 
-![](support/demo.mp4)
+![](support/demo.gif)
 
 # Getting Started with Create React App
 
